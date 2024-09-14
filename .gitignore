@@ -1,0 +1,27 @@
+# Unity generated folders
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+
+# Unity auto-generated files
+/[Aa]ssets/**/*.cs.meta
+/[Aa]ssets/**/*.unity.meta
+
+# Visual Studio
+.vs/
+/.vscode/
+*.csproj
+*.sln
+
+# JetBrains Rider
+.idea/
+
+# Mac OS files
+.DS_Store
+
+# Windows files
+Thumbs.db
