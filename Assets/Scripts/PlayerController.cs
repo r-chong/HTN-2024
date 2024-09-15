@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
+    public Animator animator;
+    public SpriteRenderer spriteRenderer;
     public Rigidbody rb;
     public float moveSpeed, jumpForce;
     private Vector2 moveInput;
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
         }
         
         HandleMovement();
+        HandleAnimation();
     }
     void HandleMovement() {
         moveInput.x = Input.GetAxis("Horizontal");
@@ -51,5 +53,17 @@ public class PlayerController : MonoBehaviour
         moveInput.Normalize();
 
         rb.velocity = new Vector3(moveInput.x * moveSpeed, rb.velocity.y, moveInput.y * moveSpeed);
+    }
+
+    void HandleAnimation() {
+        animator.SetFloat("Speed", moveInput.magnitude);
+        if (moveInput.x > 0)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else if (moveInput.x < 0)
+        {
+            spriteRenderer.flipX = false;
+        }
     }
 }
