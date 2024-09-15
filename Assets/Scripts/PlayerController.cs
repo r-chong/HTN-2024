@@ -10,38 +10,26 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
     public float moveSpeed, jumpForce;
     private Vector2 moveInput;
-    // private bool withinRangeOfInteractable = false;
-    private bool activateInteractable = false;
+    private bool withinRangeOfInteractable;
 
     private void OnTriggerEnter(Collider other)
     {
-        // withinRangeOfInteractable = true;
-        Debug.Log("Entered object " + other.gameObject.name + "");
-        if (activateInteractable) {
-            switch (other.tag) {
-                case "Typewriter":
-                    InteractWithTypewriter(other.gameObject);
-                    break;
-                default:
-                    Debug.Log("Unknown object");
-                    break;
-            }
-        }
-        
+        withinRangeOfInteractable = true;
     }
 
-    private void InteractWithTypewriter(GameObject typewriter) {
+    private void OnTriggerExit(Collider other) {
+        withinRangeOfInteractable = false;
+    }
+
+    private void InteractWithTypewriter() {
         Debug.Log("Interacting with typewriter. Activate typing UI here");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E)) {
-            activateInteractable = true;
-            Debug.Log("pressing E");
-        } else {
-            activateInteractable = false;
+        if (Input.GetKeyDown(KeyCode.E) & withinRangeOfInteractable == true)  {
+            InteractWithTypewriter();
         }
         
         HandleMovement();
