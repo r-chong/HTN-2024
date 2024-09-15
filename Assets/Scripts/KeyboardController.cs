@@ -7,19 +7,44 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Networking;
+
+[System.Serializable]
+public class ResponseData
+{
+    public int score;
+    public string[] feedback;
+}
+
+[System.Serializable]
+public class FeedbackWrapper
+{
+    public string[] feedback;
+}
 
 
 public class KeyboardController : MonoBehaviour
 {
-    public TextMeshPro TextMesh;
+    public TextMeshPro TextMesh, TextMeshPrompt;
     public PlayerController PlayerControllerReference;
-    public MeshRenderer MeshRendererReference;
+    public MeshRenderer MeshRendererReference1, MeshRendererReference2;
 
     public GameObject Keyboard;
+    public bool isAwaiting;
+    public bool isDisplaying;
+    public int score;
+    public string feedback;
+
+    private string apiUrl = "https://chatgpme-873976347647.us-east1.run.app/compare";
 
     void Start(){
         TextMesh.text = "";
-        MeshRendererReference = GetComponent<MeshRenderer>();
+        MeshRendererReference1.enabled = false;
+        MeshRendererReference2.enabled = false;
+        isAwaiting = false;
+        isDisplaying = false;
+        score = 0;
+        feedback = "";
 
         if (Keyboard == null) Debug.Log("Keyboard object is null!");
     }
@@ -29,8 +54,37 @@ public class KeyboardController : MonoBehaviour
         // Debug.Log(TextMesh.text);
         // whether this screen should be visible
         if (PlayerControllerReference != null){
-            if (PlayerControllerReference.isTyping) MeshRendererReference.enabled = true;
-            else MeshRendererReference.enabled = false;
+            if (PlayerControllerReference.isTyping){
+                MeshRendererReference1.enabled = true;
+            }
+            else {
+                MeshRendererReference1.enabled = false;
+            }
+
+            if (isAwaiting){
+                MeshRendererReference1.enabled = true;
+                TextMesh.text = "Loading...";
+            }
+        }
+
+        // if it's displaying right now
+        if (isDisplaying){
+            MeshRendererReference1.enabled = true;
+
+            TextMesh.text = (score + " / 100 " + feedback);
+
+            bool anyKeys = false;
+
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode))) if (Input.GetKeyDown(key)) anyKeys = true;
+
+            if (anyKeys){
+                isDisplaying = false;
+                score = 0;
+                feedback = "";
+                TextMesh.text = "";
+                MeshRendererReference2.enabled = false;
+                TextMeshPrompt.text = "";
+            }
         }
 
         // keyboard input
@@ -77,14 +131,8 @@ public class KeyboardController : MonoBehaviour
                     }
                     else if (key == KeyCode.Return) // Handle enter key (for example, add a new line)
                     {
-                        // Send the POST request with the current text when Enter is pressed
-                        SendPostRequest(TextMesh.text).ContinueWith(task =>
-                        {
-                            if (task.Exception != null)
-                                {
-                                    Debug.LogError("Failed to send POST request: " + task.Exception.Message);
-                                }
-                        });
+                        isAwaiting = true;
+                        StartCoroutine(SendPostRequest(TextMesh.text));
 
                         TextMesh.text = ""; // Clear the text after sending
                         PlayerControllerReference.isTyping = false;
@@ -129,48 +177,40 @@ public class KeyboardController : MonoBehaviour
                 }
             }
         } 
-        // resets the text mesh
-        else TextMesh.text = "";
     }
 
-    public async Task SendPostRequest(string userResponseParam)
+    IEnumerator SendPostRequest(string userResponseParam)
     {
+        // Create the JSON body
+        string jsonBody = $"{{\"respondedPrompt\": \"Should I get back with my ex?\",\"userResponse\": \"{userResponseParam}\"}}";
 
-        Debug.Log("passed value is " + userResponseParam);
-        // Define the URL
-        string url = "https://chatgpme-873976347647.us-east1.run.app/compare";
+        // Create a new UnityWebRequest for a POST request
+        UnityWebRequest request = new UnityWebRequest(apiUrl, "POST");
+        byte[] bodyRaw = new System.Text.UTF8Encoding().GetBytes(jsonBody);
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
 
-        // Create the data object
-        var data = new
+        // Send the request and wait for a response
+        yield return request.SendWebRequest();
+
+        // Handle the response
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
         {
-            respondedPrompt = "Should I get back with my ex?", 
-            userResponse = userResponseParam
-        };
-
-        // Serialize the data to JSON
-        var jsonData = JsonUtility.ToJson(data);
-
-        // Create an HttpClient instance
-        using (HttpClient client = new HttpClient())
-        {
-            try
-            {
-                // Prepare the content to send (application/json)
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                // Send the POST request
-                HttpResponseMessage response = await client.PostAsync(url, content);
-
-                // Read the response content
-                string responseString = await response.Content.ReadAsStringAsync();
-
-                // Output the response (you can modify this to show in the UI or handle it as needed)
-                Debug.Log("Response from server: " + responseString);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Error sending POST request: " + ex.Message);
-            }
+            Debug.LogError("Error: " + request.error);
         }
+        else
+        {
+            ResponseData responseData = JsonUtility.FromJson<ResponseData>(request.downloadHandler.text);
+
+            Debug.Log("Response: " + request.downloadHandler.text);
+
+            score = responseData.score;
+            feedback = string.Join(" ", responseData.feedback);
+            Debug.Log("feedback is " + feedback);
+        }
+
+        isAwaiting = false;
+        isDisplaying = true;
     }
 }
