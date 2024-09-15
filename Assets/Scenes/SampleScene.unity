@@ -333,6 +333,8 @@ MonoBehaviour:
   rb: {fileID: 537588195}
   moveSpeed: 10
   jumpForce: 15
+  moveInput: {x: 0, y: 0}
+  withinRangeOfInteractable: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
