@@ -9,19 +9,43 @@ public class PlayerController : MonoBehaviour
     public Rigidbody rb;
     public float moveSpeed, jumpForce;
     private Vector2 moveInput;
+    // private bool withinRangeOfInteractable = false;
+    private bool activateInteractable = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("collision occurred");
+        // withinRangeOfInteractable = true;
+        Debug.Log("Entered object " + other.gameObject.name + "");
+        if (activateInteractable) {
+            switch (other.tag) {
+                case "Typewriter":
+                    InteractWithTypewriter(other.gameObject);
+                    break;
+                default:
+                    Debug.Log("Unknown object");
+                    break;
+            }
+        }
+        
     }
 
-    // private void InteractWithTypewriter(GameObject typewriter) {
-    //     Debug.Log("Interacting with typewriter. Activate typing UI here");
-    // }
+    private void InteractWithTypewriter(GameObject typewriter) {
+        Debug.Log("Interacting with typewriter. Activate typing UI here");
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.E)) {
+            activateInteractable = true;
+            Debug.Log("pressing E");
+        } else {
+            activateInteractable = false;
+        }
+        
+        HandleMovement();
+    }
+    void HandleMovement() {
         moveInput.x = Input.GetAxis("Horizontal");
         moveInput.y = Input.GetAxis("Vertical");
         moveInput.Normalize();
