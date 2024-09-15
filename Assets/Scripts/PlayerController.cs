@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed, jumpForce;
     private Vector2 moveInput;
     private bool withinRangeOfInteractable;
+    public bool isTyping;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -18,17 +19,19 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerExit(Collider other) {
         withinRangeOfInteractable = false;
-    }
-
-    private void InteractWithTypewriter() {
-        Debug.Log("Interacting with typewriter. Activate typing UI here");
+        isTyping = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Debug.Log("isTyping is currently" + isTyping);
         if (Input.GetKeyDown(KeyCode.E) & withinRangeOfInteractable == true)  {
-            InteractWithTypewriter();
+            isTyping = true;
+        }
+
+        if (withinRangeOfInteractable & Input.GetKeyDown(KeyCode.Escape) == true){
+            isTyping = false;
         }
         
         HandleMovement();
