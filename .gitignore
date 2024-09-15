@@ -7,10 +7,6 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
-# Unity auto-generated files
-/[Aa]ssets/**/*.cs.meta
-/[Aa]ssets/**/*.unity.meta
-
 # Visual Studio
 .vs/
 /.vscode/

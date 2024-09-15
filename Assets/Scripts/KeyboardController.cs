@@ -16,10 +16,6 @@ public class KeyboardController : MonoBehaviour
         TextMesh.text = "";
         MeshRendererReference = GetComponent<MeshRenderer>();
 
-        Color color = MeshRendererReference.material.color;
-        color.a = 1.0f;
-        MeshRendererReference.material.color = color;
-
         if (Keyboard == null) Debug.Log("Keyboard object is null!");
     }
 
@@ -28,8 +24,6 @@ public class KeyboardController : MonoBehaviour
         // Debug.Log(TextMesh.text);
         // whether this screen should be visible
         if (PlayerControllerReference != null){
-            Debug.Log("the value from PlayerController is " + PlayerControllerReference.isTyping);
-
             if (PlayerControllerReference.isTyping) MeshRendererReference.enabled = true;
             else MeshRendererReference.enabled = false;
         }
@@ -50,6 +44,19 @@ public class KeyboardController : MonoBehaviour
                     if (key >= KeyCode.A && key <= KeyCode.Z) // Check if the key is a letter
                     {
                         TextMesh.text += isShiftPressed ? key.ToString() : key.ToString().ToLower();
+                    }
+                    else if (KeyCode.Alpha0 <= key && key <= KeyCode.Alpha9){
+                        int number = (int)key - (int)KeyCode.Alpha0; 
+                        char character = (char)('0' + number); 
+
+                        // Handle Shift key for symbols
+                        if (isShiftPressed)
+                        {
+                            // Mapping for shifted number keys
+                            string[] shiftedSymbols = { ")", "!", "@", "#", "$", "%", "^", "&", "*", "(" };
+                            TextMesh.text += shiftedSymbols[number];
+                        }
+                        else TextMesh.text += character;
                     }
                     else if (key == KeyCode.Space) // Handle space key
                     {
