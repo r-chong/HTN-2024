@@ -325,7 +325,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 537588193}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f62effe6b1b46242b557ba910515116, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c5c47fddb401794b94017248258bada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1311203709}
@@ -333,8 +333,6 @@ MonoBehaviour:
   rb: {fileID: 537588195}
   moveSpeed: 10
   jumpForce: 15
-  moveInput: {x: 0, y: 0}
-  withinRangeOfInteractable: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,7 +609,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 48096103295025449ad644283ca30668, type: 3}
+  m_Sprite: {fileID: -1709188299, guid: f634d9ee390628a489ba1c07d5f57f11, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -631,7 +629,7 @@ Transform:
   m_GameObject: {fileID: 1311203706}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: -2.9516504, z: -0.055455923}
+  m_LocalPosition: {x: 0, y: -0.2, z: -0.055455923}
   m_LocalScale: {x: 1, y: 1, z: 1.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
