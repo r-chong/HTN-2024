@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 
 public class KeyboardController : MonoBehaviour
 {
+    public TextMeshPro TextMesh;
     public PlayerController PlayerControllerReference;
     public MeshRenderer MeshRendererReference;
 
     public GameObject Keyboard;
 
-    public string KeyboardText;
-
     void Start(){
-        MeshRendererReference  = GetComponent<MeshRenderer>();
+        TextMesh.text = "";
+        MeshRendererReference = GetComponent<MeshRenderer>();
 
         Color color = MeshRendererReference.material.color;
         color.a = 1.0f;
@@ -24,6 +25,7 @@ public class KeyboardController : MonoBehaviour
 
     void Update()
     {
+        // Debug.Log(TextMesh.text);
         // whether this screen should be visible
         if (PlayerControllerReference != null){
             Debug.Log("the value from PlayerController is " + PlayerControllerReference.isTyping);
@@ -34,15 +36,11 @@ public class KeyboardController : MonoBehaviour
 
         // keyboard input
         if (PlayerControllerReference.isTyping){
+            bool isShiftPressed = false;
+
             // Check for shift key
-            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-            {
-                isShiftPressed = true;
-            }
-            else
-            {
-                isShiftPressed = false;
-            }
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) isShiftPressed = true;
+            else isShiftPressed = false;
 
             // Handle key input
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
@@ -51,25 +49,27 @@ public class KeyboardController : MonoBehaviour
                 {
                     if (key >= KeyCode.A && key <= KeyCode.Z) // Check if the key is a letter
                     {
-                        KeyboardText += isShiftPressed ? key.ToString() : key.ToString().ToLower();
+                        TextMesh.text += isShiftPressed ? key.ToString() : key.ToString().ToLower();
                     }
                     else if (key == KeyCode.Space) // Handle space key
                     {
-                        KeyboardText += " ";
+                        TextMesh.text += " ";
                     }
                     else if (key == KeyCode.Backspace) // Handle backspace
                     {
-                        if (KeyboardText.Length > 0)
+                        if (TextMesh.text.Length > 0)
                         {
-                            KeyboardText = KeyboardText.Substring(0, KeyboardText.Length - 1);
+                            TextMesh.text = TextMesh.text.Substring(0, TextMesh.text.Length - 1);
                         }
                     }
-                    else if (key == KeyCode.Enter) // Handle enter key (for example, add a new line)
+                    else if (key == KeyCode.Return) // Handle enter key (for example, add a new line)
                     {
-                        KeyboardText += "\n";
+                        TextMesh.text += "\n";
                     }
                 }
             }
-        }
+        } 
+        // resets the text mesh
+        else TextMesh.text = "";
     }
 }

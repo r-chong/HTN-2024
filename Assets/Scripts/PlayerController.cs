@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
             isTyping = false;
         }
         
-        HandleMovement();
+        if (!isTyping) HandleMovement();
     }
     void HandleMovement() {
         moveInput.x = Input.GetAxis("Horizontal");
